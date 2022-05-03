@@ -2,6 +2,7 @@ package com.kotakotik.ponderjs;
 
 import dev.latvian.mods.kubejs.KubeJS;
 import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ListJS;
 import net.minecraft.client.Minecraft;
@@ -60,8 +61,8 @@ public class PonderRegistryEventJS extends EventJS {
         rerun = true;
     }
 
-    public PonderBuilderJS create(String name, Object items) {
-        return new PonderBuilderJS(name, ListJS.orSelf(items));
+    public PonderBuilderJS create(String name, IngredientJS ingredient) {
+        return new PonderBuilderJS(name, ingredient.getVanillaItems());
     }
 
     public static void register(FMLClientSetupEvent event) {
