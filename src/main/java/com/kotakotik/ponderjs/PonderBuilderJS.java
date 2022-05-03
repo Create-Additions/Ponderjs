@@ -3,6 +3,7 @@ package com.kotakotik.ponderjs;
 import com.kotakotik.ponderjs.api.AbstractPonderBuilder;
 import com.kotakotik.ponderjs.util.SceneBuilderJS;
 import com.kotakotik.ponderjs.util.SceneBuildingUtilJS;
+import com.simibubi.create.Create;
 import com.simibubi.create.foundation.ponder.SceneBuilder;
 import com.simibubi.create.foundation.ponder.SceneBuildingUtil;
 import com.simibubi.create.foundation.utility.Couple;
@@ -70,7 +71,7 @@ public class PonderBuilderJS extends
 
     @Override
     protected ItemProviderEntry<?> getItemProviderEntry(ResourceLocation item) {
-        return PonderJS.createItemProvider(RegistryObject.of(item, ForgeRegistries.ITEMS));
+        return new ItemProviderEntry<>(Create.registrate(), RegistryObject.create(item, ForgeRegistries.ITEMS));
     }
 
     @Override
