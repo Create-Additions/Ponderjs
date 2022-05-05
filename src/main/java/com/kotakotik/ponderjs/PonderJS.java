@@ -14,6 +14,7 @@ import com.simibubi.create.foundation.utility.Pointing;
 import dev.latvian.mods.kubejs.KubeJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -111,7 +112,12 @@ public class PonderJS {
             for (int i = 0; i < stories.size(); i++) {
                 var story = stories.get(i);
                 if(namespaces.contains(story.getNamespace())) {
-                    PonderRegistry.compileScene(i, story,null);
+                    try {
+                        PonderRegistry.compileScene(i, story,null);
+                    } catch (Exception e) {
+                        ConsoleJS.CLIENT.error(e);
+                        e.printStackTrace();
+                    }
                 }
             }
         });
