@@ -27,23 +27,16 @@ public class PonderBuilderJS extends
         }
     }
 
-//    public PonderBuilderJS<T> scene(List<ResourceLocation> items, List<List<Object>> storyBoards, BiConsumer<SceneBuilder, SceneBuildingUtil> scene) {
-//        return step(i -> {
-//           PonderRegistry.MultiSceneBuilder multiSceneBuilder = PonderRegistry.forComponents(items.stream().map((id) -> PonderRegistryEventJS.createItemProvider(RegistryObject.of(id, ForgeRegistries.ITEMS))).collect(Collectors.toList()));
-//                        multiSceneBuilder.addStoryBoard("test", scene::accept);
-//        });
-//    }]
-
     public static HashMap<String, SceneConsumer> scenes = new HashMap<>();
 
     public PonderBuilderJS scene(String name, String displayName, String schematic, SceneConsumer scene) {
         String fullName = getName(name);
-        if (PonderRegistryEventJS.rerun && !scenes.containsKey(fullName)) {
+        if (PonderJS.isInitialized() && !scenes.containsKey(fullName)) {
             ScriptType.CLIENT.console.error("Tried to register ponder scene " + fullName + " in a reload, you'll have to restart!");
             return this;
         }
         scenes.put(fullName, scene);
-        if (!PonderRegistryEventJS.rerun) {
+        if (!PonderJS.isInitialized()) {
             String pathOnlyName = getPathOnlyName(name);
             Couple<String> sceneId = Couple.create(this.name.getNamespace(), pathOnlyName);
             if (!PonderJS.scenes.contains(sceneId)) {
