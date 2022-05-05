@@ -1,8 +1,8 @@
 package com.kotakotik.ponderjs.commands;
 
 import com.kotakotik.ponderjs.BuildConfig;
-import com.kotakotik.ponderjs.commands.GenerateKubeJSLangCommand;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -17,8 +17,9 @@ public class PJSCommands {
         CommandDispatcher<CommandSourceStack> dis = event.getDispatcher();
         LiteralArgumentBuilder<CommandSourceStack> b = Commands.literal(BuildConfig.MODID);
         b.then(Commands.literal("generate_lang_template")
-                .requires((source) -> source.getServer().isSingleplayer())
-                .executes(new GenerateKubeJSLangCommand()));
+                .then(Commands.argument("lang", StringArgumentType.word())
+                        .requires((source) -> source.getServer().isSingleplayer())
+                        .executes(new GenerateKubeJSLangCommand())));
         dis.register(b);
     }
 }

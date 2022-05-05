@@ -12,7 +12,8 @@ import org.antlr.v4.runtime.misc.Triple;
 public class GenerateKubeJSLangCommand implements Command<CommandSourceStack> {
     @Override
     public int run(CommandContext<CommandSourceStack> context) {
-        Triple<Boolean, Component, Integer> result = PonderJS.generateJsonLang();
+        String lang = context.getArgument("lang", String.class);
+        Triple<Boolean, Component, Integer> result = PonderJS.generateJsonLang(lang);
         CommandSourceStack source = context.getSource();
         if (result.a) {
             source.sendSuccess(result.b, false);

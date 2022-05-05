@@ -3,7 +3,6 @@ package com.kotakotik.ponderjs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 import com.kotakotik.ponderjs.config.ModConfigs;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.gui.AllIcons;
@@ -16,17 +15,12 @@ import dev.latvian.mods.kubejs.KubeJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
-import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.antlr.v4.runtime.misc.Triple;
 import org.apache.commons.io.FileUtils;
@@ -34,9 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class PonderJS {
     public static final String TAG_EVENT = "ponder.tag";
@@ -75,11 +67,11 @@ public class PonderJS {
         typeWrappers.register(PonderTag.class, o -> PonderJS.getTagByName(o.toString()).orElseThrow(() -> new NoSuchElementException("No tags found matching " + o)));
     }
 
-    public static Triple<Boolean, Component, Integer> generateJsonLang() {
-        Map<String, String> lang = createLang();
+    public static Triple<Boolean, Component, Integer> generateJsonLang(String langName) {
+        Map<String, String> langMap = createLang();
         Logger log = PonderJSMod.LOGGER;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        File file = new File(ModConfigs.CLIENT.getLangPath());
+        File file = new File(ModConfigs.CLIENT.getLangPath().replace("%lang%", langName));
         JsonObject json = new JsonObject();
         if (file.exists()) {
             log.info("Found KubeJS lang, reading!");
@@ -91,7 +83,7 @@ public class PonderJS {
         }
         JsonObject finalJson = json;
         List<String> wrote = new ArrayList<>();
-        lang.forEach((key, value) -> {
+        langMap.forEach((key, value) -> {
             if (!(finalJson.has(key) && finalJson.get(key).getAsString().equals(value))) {
                 log.info("Writing KubeJS lang key " + key);
                 finalJson.addProperty(key, value);
@@ -108,7 +100,7 @@ public class PonderJS {
             }
             return new Triple<>(true, new TextComponent(c), wrote.size());
         } catch (IOException e) {
-            log.error("Couldn't write KubeJS lang");
+            log.error("Couldn't write KubeJS langMap");
             e.printStackTrace();
             return new Triple<>(false, new TextComponent("Unable to write KubeJS lang: " + e.getClass().getSimpleName() + "\nMore info in logs"), wrote.size());
         }
